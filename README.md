@@ -6,6 +6,7 @@ Homebrew tap for [Vow](https://vowlang.dev) — native compiler + vpm.
 
 ```bash
 brew tap vowlang/tap https://github.com/vowlang/homebrew-vowlang
+brew trust vowlang/tap
 brew install vow
 vow version
 ```
@@ -14,6 +15,14 @@ Or after the tap is published to GitHub:
 
 ```bash
 brew tap vowlang/tap
+brew trust vowlang/tap
+brew install vow
+```
+
+Homebrew 4.x blocks installs from new third-party taps until you trust them once. Alternative:
+
+```bash
+brew trust --formula vowlang/tap/vow
 brew install vow
 ```
 
