@@ -28,17 +28,36 @@ class Vow < Formula
     end
   end
 
-  depends_on "libpq"
-
   def install
     prefix.install "bin"
     prefix.install "share"
     (prefix/"VERSION").write version.to_s if (buildpath/"VERSION").exist?
+
+    # Tarball may ship a build-machine-specific runtime_link.flags; rewrite here.
+    flags = prefix/"share/vow/release/runtime_link.flags"
+    flags.delete if flags.exist?
+    lib_dir = libpq_libdir
+    if lib_dir
+      flags.write("-L#{lib_dir}\n-lpq\n")
+    else
+      flags.write("-lpq\n")
+    end
   end
 
-  def post_install
-    libpq = Formula["libpq"].opt_lib
-    (share/"vow/release/runtime_link.flags").write("-L#{libpq}\n-lpq\n")
+  def libpq_libdir
+    libpq_opt = HOMEBREW_PREFIX/"opt/libpq/lib"
+    return libpq_opt if libpq_opt.directory?
+
+    if (pg_config = which("pg_config"))
+      lib = Utils.safe_popen_read(pg_config, "--libdir").strip
+      return Pathname.new(lib) if !lib.empty? && Pathname.new(lib).directory?
+    end
+
+    Dir.glob(HOMEBREW_PREFIX/"lib/postgresql@*").sort.reverse_each do |d|
+      return Pathname.new(d) if File.directory?(d)
+    end
+
+    nil
   end
 
   def caveats
@@ -46,6 +65,10 @@ class Vow < Formula
       Vow is installed to #{prefix}.
       Run: vow version
       Optional: vpm add vow-serve -g
+
+      Postgres apps (vow-postgres): install libpq if linking fails
+        brew install libpq
+        brew reinstall vow
     EOS
   end
 
