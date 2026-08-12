@@ -9,7 +9,7 @@ class Vow < Formula
   on_macos do
     on_arm do
       url "https://install.vowlang.dev/vow-darwin-arm64.tar.gz"
-      sha256 "d5381eb5bc372063e164996435887fa599e7de53769046ab0cabeec9189c3e2c"
+      sha256 "693e71b0e4252f7acc3389e1e8e63603d4971b080bec6146dec0c0199d1a150c"
     end
     on_intel do
       url "https://install.vowlang.dev/vow-darwin-amd64.tar.gz"
@@ -28,10 +28,17 @@ class Vow < Formula
     end
   end
 
+  depends_on "libpq"
+
   def install
     prefix.install "bin"
     prefix.install "share"
     (prefix/"VERSION").write version.to_s if (buildpath/"VERSION").exist?
+  end
+
+  def post_install
+    libpq = Formula["libpq"].opt_lib
+    (share/"vow/release/runtime_link.flags").write("-L#{libpq}\n-lpq\n")
   end
 
   def caveats
