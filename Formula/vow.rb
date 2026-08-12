@@ -9,7 +9,7 @@ class Vow < Formula
   on_macos do
     on_arm do
       url "https://install.vowlang.dev/vow-darwin-arm64.tar.gz"
-      sha256 "f9a3e5b80687af50fafa8cb6cd8efb5012e3a10c1047fb665a39d8fe57f0a5c2"
+      sha256 "d5381eb5bc372063e164996435887fa599e7de53769046ab0cabeec9189c3e2c"
     end
     on_intel do
       url "https://install.vowlang.dev/vow-darwin-amd64.tar.gz"
